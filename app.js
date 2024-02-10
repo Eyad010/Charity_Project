@@ -3,7 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const xss = require('xss-clean');
-const authRouter = require('./routes/authRoutes');
+const beneFactorRouter = require('./routes/beneFactorRoutes');
 
 const app = express();
 
@@ -16,6 +16,6 @@ app.use(cors()); // enable CORS
 app.use(xss());
 
 // routes
-app.use('/api/v2/auths', authRouter);
+app.use('/api/v2/beneFactor', beneFactorRouter);
 
 module.exports = app;
