@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const beneFactorRouter = require('./routes/beneFactorRoutes');
+const OrganizationRouter = require('./routes/authOrganizationRoutes');
+
 
 const app = express();
 
@@ -17,5 +19,6 @@ app.use(xss());
 
 // routes
 app.use('/api/v2/beneFactor', beneFactorRouter);
+app.use('/api/v2/authOrganization', OrganizationRouter)
 
 module.exports = app;
