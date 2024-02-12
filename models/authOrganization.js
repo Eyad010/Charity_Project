@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require("bcryptjs");
+const crypto = require('crypto');
 
 
 const organizationSchema = new mongoose.Schema({
@@ -37,13 +38,16 @@ const organizationSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: true
+        required: [true, 'Please provide your address']
     },
     role: {
         type: String,
         enum: ['admin', 'receptionist', 'store employee'],
         default: 'admin'
-      } 
+      },
+      passwordChangedAt: Date,
+      passwordResetToken: String,
+      passwordResetExpires: Date
 });
 
 
@@ -60,6 +64,8 @@ organizationSchema.pre("save", async function (next) {
     next();
   });
 
+  // run before saving a document to the database
+  //  if the "password" field is being modified and it's not a new document
   organizationSchema.pre("save", function (next) {
     if (!this.isModified("password") || this.isNew) return next();
     this.passwordChangedAt = Date.now() - 1000;
@@ -74,6 +80,51 @@ organizationSchema.pre("save", async function (next) {
   ) {
     return await bcrypt.compare(candidatePassword, userPassword);
   };
+
+  // check if role correct 
+  organizationSchema.methods.correctRole = function (candidateRole) {
+    // Retrieve the organization's role from the database
+    const userRole = this.role;
+
+    // Check if both candidateRole and userRole are defined and not null
+    if (!candidateRole || !userRole) {
+        return false; // Or you can throw an error
+    }
+
+    // Compare the candidateRole with the userRole
+    return candidateRole === userRole;
+};
+
+organizationSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+    if (this.passwordChangedAt) {
+      const changedTimestamp = parseInt(
+        this.passwordChangedAt.getTime() / 1000,
+        10
+      );
+  
+      return JWTTimestamp < changedTimestamp;
+    }
+  
+    // False means NOT changed
+    return false;
+  };
+  
+  organizationSchema.methods.createPasswordResetToken = function() {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+  
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+  
+    console.log({ resetToken }, this.passwordResetToken);
+  
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  
+    return resetToken;
+  };
+
+
 
 const Organization = mongoose.model('Organization', organizationSchema);
 
