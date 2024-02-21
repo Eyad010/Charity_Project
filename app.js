@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const beneFactorRouter = require('./routes/beneFactorRoutes');
 const OrganizationRouter = require('./routes/authOrganizationRoutes');
-
+const talabatRouter = require('./routes/talabatRouter');
 
 const app = express();
 
@@ -20,5 +20,6 @@ app.use(xss());
 // routes
 app.use('/api/v2/beneFactor', beneFactorRouter);
 app.use('/api/v2/authOrganization', OrganizationRouter)
+app.use('/api/v2/talabat', talabatRouter);
 
 module.exports = app;
