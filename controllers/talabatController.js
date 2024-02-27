@@ -4,7 +4,7 @@ const AppError = require("../utils/appError");
 const Item = require("../models/items");
 
 exports.getAllItems = catchAsync(async (req, res, next) => {
-  const items = await Item.find();
+  const items = await Item.find({}, "photo description category");
 
   res.status(200).json({
     status: "success",
