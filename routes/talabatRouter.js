@@ -4,7 +4,6 @@ const {
   restrictTo,
   protect,
 } = require("../controllers/authOrganizationController");
-const Talabat = require("../models/talabat");
 
 const router = express.Router();
 
@@ -44,5 +43,7 @@ router.get(
   restrictTo("admin"),
   talabatController.getUnViewedTalabat
 );
+
+router.get("/getAllItems", protect, talabatController.getAllItems);
 
 module.exports = router;

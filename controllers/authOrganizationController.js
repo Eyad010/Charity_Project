@@ -152,15 +152,3 @@ exports.restrictTo = (role) => {
     next();
   };
 };
-
-// Define a function that returns the middleware for filtering Talabat data based on the value
-// exports.talabat = (value) => {
-//   return (req, res, next) => {
-//     if (req.talabat.value == value) {
-//       return next();
-//     } else {
-//       // Handle the case when the value doesn't match
-//       return res.status(403).send("Forbidden");
-//     }
-//   };
-// };

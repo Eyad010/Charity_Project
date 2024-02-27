@@ -4,13 +4,14 @@ const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const multer = require("multer");
-const sharp = require("sharp");
 const path = require("path");
-// const { promisify } = require("util");
-// const crypto = require("crypto");
+const {
+  cloudinaryUploadImage,
+  cloudinaryRemoveImage,
+} = require("../utils/cloudinary");
+const fs = require("fs");
 
 // generate token
-
 const singToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -32,7 +33,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.singup = catchAsync(async (req, res, next) => {
-  const { name, email, password, passwordConfirm, phone } = req.body;
+  const { name, email, password, passwordConfirm, phone, address } = req.body;
 
   // Check if email already exists in the database
   const user = await BeneFactor.findOne({ email });
@@ -51,6 +52,7 @@ exports.singup = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
     phone,
+    address,
   });
   // send jwt to client side with token and user info
   createSendToken(newUser, 201, res);
@@ -103,23 +105,6 @@ const uploadImages = multer({
   fileFilter: multerFilter,
 });
 
-// const multerStorage = multer.memoryStorage();
-
-// // filter to test if the upload is an image
-// const multerFilter = (req, file, cb) => {
-//     if(file.mimetype.startsWith('image')){
-//       cb(null, true);
-//     }else{
-//       cb(new AppError("Not an image! Please upload images only.", 400));
-//     }
-//   };
-
-//   // middleware for upload photo
-//   const upload = multer({
-//     storage: multerStorage,
-//     fileFilter: multerFilter
-//   });
-
 exports.uploadItemPhotos = uploadImages.fields([
   { name: "photo", maxCount: 3 },
 ]);
@@ -133,15 +118,19 @@ exports.resizeItemPhoto = catchAsync(async (req, res, next) => {
 
   await Promise.all(
     req.files.photo.map(async (file, i) => {
-      const filename = `item-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+      const result = await cloudinaryUploadImage(file.path);
 
-      // await sharp(file[0].buffer)
-      //   .resize(2000, 1333)
-      //   .toFormat("jpeg")
-      //   .jpeg({ quality: 90 })
-      //   .toFile(`public/img/${filename}`);
+      // console.log(result);
 
-      req.body.photo.push(filename);
+      // Store URL and public ID in an object
+      const imageData = {
+        url: result.secure_url,
+        publicId: result.public_id,
+      };
+
+      req.body.photo.push(imageData);
+      // remove  file from server once it has been saved in Cloudnary
+      fs.unlinkSync(file.path);
     })
   );
 

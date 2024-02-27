@@ -1,6 +1,19 @@
 const Talabat = require("../models/talabat");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const Item = require("../models/items");
+
+exports.getAllItems = catchAsync(async (req, res, next) => {
+  const items = await Item.find();
+
+  res.status(200).json({
+    status: "success",
+    total: items.length,
+    data: {
+      items,
+    },
+  });
+});
 
 exports.reqTalab = catchAsync(async (req, res, next) => {
   const talab = await Talabat.create(req.body);
