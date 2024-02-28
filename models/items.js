@@ -19,6 +19,10 @@ const itemSchema = new mongoose.Schema({
       publicId: String,
     },
   ],
+  item: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: [true, "Please provide a description for item"],

@@ -6,7 +6,7 @@ const talabatSchema = new mongoose.Schema({
     required: [true, "Please provide your name"],
   },
   phone: { type: String },
-  talab: {
+  item: {
     type: String,
     required: [true, "Please provide your Talab"],
   },

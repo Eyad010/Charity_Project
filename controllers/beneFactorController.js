@@ -145,6 +145,7 @@ exports.donate = catchAsync(async (req, res, next) => {
     photo: req.body.photo,
     description: req.body.description,
     category: req.body.category,
+    item: req.body.item,
   });
 
   res.status(201).json({

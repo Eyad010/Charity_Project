@@ -44,6 +44,4 @@ router.get(
   talabatController.getUnViewedTalabat
 );
 
-router.get("/getAllItems", protect, talabatController.getAllItems);
-
 module.exports = router;
