@@ -5,6 +5,8 @@ const AppError = require("../utils/appError");
 exports.reqTalab = catchAsync(async (req, res, next) => {
   const talab = await Talabat.create(req.body);
 
+  // Respond with json
+
   res.status(201).json({
     status: "success",
     data: {
@@ -41,7 +43,7 @@ exports.getTalabatById = catchAsync(async (req, res, next) => {
 
 exports.updateTalabRequest = catchAsync(async (req, res, next) => {
   const talab = await Talabat.findByIdAndUpdate(req.params.id, req.body);
-  console.log("NewTalab", newTalab);
+
   res.status(200).json({
     status: "success",
     message: "Talab updated successfully!",
@@ -72,5 +74,26 @@ exports.getUnViewedTalabat = catchAsync(async (req, res, next) => {
     data: {
       talab,
     },
+  });
+});
+
+exports.deleteRejectedTalab = catchAsync(async (req, res, next) => {
+  const deletedTalab = await Talabat.findOneAndDelete({
+    _id: req.params.id,
+    value: 0,
+  });
+
+  if (!deletedTalab) {
+    return next(
+      new AppError(
+        "This talab has not been seen by the admin Or This talab has been accepted Or No talab found with that ID!",
+        404
+      )
+    );
+  }
+
+  res.status(204).json({
+    status: "success",
+    data: { deletedTalab },
   });
 });

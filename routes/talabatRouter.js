@@ -14,19 +14,9 @@ router.post(
   talabatController.reqTalab
 );
 
-router.get(
-  "/getTalabat",
-  protect,
-  restrictTo("admin"),
-  talabatController.getTalabat
-);
+router.get("/getTalabat", protect, talabatController.getTalabat);
 
-router.get(
-  "/getTalabatById/:id",
-  protect,
-  restrictTo("admin"),
-  talabatController.getTalabatById
-);
+router.get("/getTalabatById/:id", protect, talabatController.getTalabatById);
 
 router.patch(
   "/updateTalabRequest/:id",
@@ -40,8 +30,14 @@ router.get("/getViewedTalabat", protect, talabatController.getViewedTalabat);
 router.get(
   "/getUnViewedTalabat",
   protect,
-  restrictTo("admin"),
   talabatController.getUnViewedTalabat
+);
+
+router.delete(
+  "/deleteRejectedTalab/:id",
+  protect,
+  restrictTo("receptionist"),
+  talabatController.deleteRejectedTalab
 );
 
 module.exports = router;

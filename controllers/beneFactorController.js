@@ -33,7 +33,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.singup = catchAsync(async (req, res, next) => {
-  const { name, email, password, passwordConfirm, phone, address } = req.body;
+  const { name, email, password, passwordConfirm, phone } = req.body;
 
   // Check if email already exists in the database
   const user = await BeneFactor.findOne({ email });
@@ -52,7 +52,6 @@ exports.singup = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
     phone,
-    address,
   });
   // send jwt to client side with token and user info
   createSendToken(newUser, 201, res);

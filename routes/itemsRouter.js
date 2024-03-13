@@ -10,10 +10,12 @@ const router = express.Router();
 router.get("/getAllItems", protect, itemsController.getAllItems);
 router.get("/search/:query", protect, itemsController.Search);
 router.delete(
-  "/deleteItem/:id",
+  "/deleteItemAndTalab/:id",
   protect,
   restrictTo("store employee"),
-  itemsController.deleteItem
+  itemsController.deleteItemAndTalab
 );
+
+router.get("/getAllCategories", protect, itemsController.getAllCategories);
 
 module.exports = router;

@@ -7,7 +7,8 @@ const talabatSchema = new mongoose.Schema({
   },
   phone: { type: String },
   item: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
+    ref: "Item",
     required: [true, "Please provide your Talab"],
   },
   maritalStatus: {
@@ -38,6 +39,14 @@ const talabatSchema = new mongoose.Schema({
     type: Number,
     default: -1, //-1 means not rated yet
   },
+});
+
+talabatSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "item",
+    select: "photo item description category ",
+  });
+  next();
 });
 
 const Talabat = mongoose.model("Talabat", talabatSchema);
